@@ -78,8 +78,8 @@ fn execute_set_contract_address(
     CONTRACT_ADDRESSES.save(deps.storage, &vec![validated_address.clone()])?;
 
     Ok(Response::new()
-        .add_attribute("method", "set_nft_address")
-        .add_attribute("NFT Address", validated_address.as_str()))
+        .add_attribute("method", "set_contract_address")
+        .add_attribute("Added Contract Address", validated_address.as_str()))
 }
 
 fn execute_after_execute(

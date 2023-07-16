@@ -15,7 +15,7 @@ use smart_account::{AfterExecute, PreExecute, MsgData};
 const CONTRACT_NAME: &str = "crates.io:base";
 const CONTRACT_VERSION: &str = env!("CARGO_PKG_VERSION");
 
-const SERVICER: &str = "";
+const SERVICER: &str = "aura16e3yfs4fc8dye8y95srns564h705h7xrewks0e";
 
 /// Handling contract instantiation
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -69,7 +69,7 @@ fn execute_set_contract_address(
     info: MessageInfo,
     contract_address: Addr,
 ) -> Result<Response, ContractError> {
-    if info.sender != SERVICER {
+    if info.sender.as_str() != SERVICER {
         return Err(ContractError::Unauthorized {});
     }
 

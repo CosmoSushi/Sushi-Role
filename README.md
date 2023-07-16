@@ -52,6 +52,8 @@ The reference implementation can be found at [access-control contract](https://g
 
 ## UserFlow(sequence diagram)
 
+https://cosmosjapan.notion.site/User-Flow-sequence-diagram-c030322cfe044359a5d4ecaefc10d9b5?pvs=4
+
 <img width="1353" alt="image" src="https://github.com/CosmoSushi/Sushi-Role/assets/20056309/123298cd-31bc-4939-b927-acd9c7a81d52">
 
 <img width="1352" alt="image" src="https://github.com/CosmoSushi/Sushi-Role/assets/20056309/c30ce72b-08ed-48e1-9462-3b73d1bde6e2">
@@ -68,7 +70,3 @@ https://www.notion.so/cosmosjapan/Sushi-Role-Demo-083c39ac89c2442881da58585228d5
 We also show the details of how CW721 contract deploy to testnet below.
 
 https://cosmosjapan.notion.site/Deploying-CW721-with-Aura-Network-serenity-testnet-001-002806ad60f04321a2379f43c78eb4db?pvs=4
-
-sequence diagram
-
-https://cosmosjapan.notion.site/User-Flow-sequence-diagram-c030322cfe044359a5d4ecaefc10d9b5?pvs=4

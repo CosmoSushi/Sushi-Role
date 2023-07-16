@@ -10,14 +10,12 @@ import { MsgExecuteContract } from "cosmjs-types/cosmwasm/wasm/v1/tx.js";
 
 dotenv.config()
 
-// Required env vars
 assert(process.env.MNEMONIC, "MNEMONIC must be set")
 const mnemonic = process.env.MNEMONIC
 
 assert(process.env.PREFIX, "PREFIX must be set")
 const prefix = process.env.PREFIX
 
-// The fee denom
 assert(process.env.DENOM, "DENOM must be set")
 const denom = process.env.DENOM
 
@@ -32,6 +30,8 @@ const gasPrice = GasPrice.fromString(process.env.GAS_PRICE)
 
 assert(process.env.GAS_WANTED, "GAS_WANTED must be set")
 const gasWanted = parseInt(process.env.GAS_WANTED)
+
+const granter = process.env.GRANTER
 
 async function connectSigner() {
     const path = stringToPath("m/44'/118'/0'/0/0")
@@ -59,36 +59,20 @@ async function getSignData(client) {
 }
 
 
-async function main(toAddress, amount) {
+async function main(mintAddress, tokenId) {
     const {client, mneAddr} = await connectSigner()
 
-    const sendMsg = {
-        typeUrl: "/cosmos.bank.v1beta1.MsgSend",
-        value: {
-        fromAddress: accountAddr,
-        toAddress: toAddress,
-        amount: [{denom:denom,amount:amount}],
-        }
-    }
-
-    const validateMsg = {
+    const mintMsg = {
         typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
         value: {
             sender: accountAddr,
-            contract: accountAddr,
+            contract: mintAddress,
             msg: toUtf8(JSON.stringify(
-            {after_execute: {
-                msgs: [
-                    {
-                    type_url: "/cosmos.bank.v1beta1.MsgSend",
-                    value: JSON.stringify({
-                        from_address: accountAddr,
-                        to_address: toAddress,
-                        amount: [{denom:denom,amount:amount}] 
-                    })
-                    }
-                ]
-                }
+            {
+              mint: {
+                "token_id": tokenId,
+                "owner": accountAddr
+              }
             })),
             "funds": []
         }
@@ -100,14 +84,12 @@ async function main(toAddress, amount) {
     const signData = await getSignData(client)
 
     let usedFee = calculateFee(gasWanted, gasPrice)
-
     if (granter !== "") {
         usedFee.granter = granter
     }
-    
     client.registry.register("/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract)
 
-    const signed = await client.sign(mneAddr, [sendMsg, validateMsg], usedFee, memo, signData)
+    const signed = await client.sign(mneAddr, [mintMsg], usedFee, memo, signData)
 
     const tx = Uint8Array.from(TxRaw.encode(signed).finish())
   
@@ -116,6 +98,8 @@ async function main(toAddress, amount) {
     console.log(p)
 }
 
-const args = process.argv.slice(2)
-assert(args.length >= 2, "Usage: node send.js <to_address> <amount> <granter>")
-await main(args[0], args[1], args[2])
+const args = process.argv.slice(1)
+console.log(args)
+console.log(args.length)
+assert(args.length >= 3, "Usage: node nft.js <cw721_address> <token_id> <granter>")
+await main(args[1], args[2], args[3])

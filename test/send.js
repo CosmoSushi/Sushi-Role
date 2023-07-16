@@ -99,7 +99,11 @@ async function main(toAddress, amount) {
     const memo = "";
     const signData = await getSignData(client)
 
-    const usedFee = calculateFee(gasWanted, gasPrice)
+    let usedFee = calculateFee(gasWanted, gasPrice)
+
+    if (granter !== "") {
+        usedFee.granter = granter
+    }
     
     client.registry.register("/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract)
 
@@ -113,5 +117,5 @@ async function main(toAddress, amount) {
 }
 
 const args = process.argv.slice(2)
-assert(args.length == 2, "Usage: node send.js <to_address> <amount>")
-await main(args[0], args[1])
+assert(args.length >= 2, "Usage: node send.js <to_address> <amount> <granter>")
+await main(args[0], args[1], args[2])

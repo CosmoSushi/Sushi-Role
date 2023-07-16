@@ -31,6 +31,8 @@ const gasPrice = GasPrice.fromString(process.env.GAS_PRICE)
 assert(process.env.GAS_WANTED, "GAS_WANTED must be set")
 const gasWanted = parseInt(process.env.GAS_WANTED)
 
+const granter = process.env.GRANTER
+
 async function connectSigner() {
     const path = stringToPath("m/44'/118'/0'/0/0")
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {hdPaths:[path], "prefix":prefix})
@@ -81,8 +83,10 @@ async function main(mintAddress, tokenId) {
     const memo = "";
     const signData = await getSignData(client)
 
-    const usedFee = calculateFee(gasWanted, gasPrice)
-    
+    let usedFee = calculateFee(gasWanted, gasPrice)
+    if (granter !== "") {
+        usedFee.granter = granter
+    }
     client.registry.register("/cosmwasm.wasm.v1.MsgExecuteContract", MsgExecuteContract)
 
     const signed = await client.sign(mneAddr, [mintMsg], usedFee, memo, signData)
@@ -97,5 +101,5 @@ async function main(mintAddress, tokenId) {
 const args = process.argv.slice(1)
 console.log(args)
 console.log(args.length)
-assert(args.length == 2, "Usage: node nft.js <cw721_address> <token_id>")
-await main(args[1], args[2])
+assert(args.length >= 3, "Usage: node nft.js <cw721_address> <token_id> <granter>")
+await main(args[1], args[2], args[3])
